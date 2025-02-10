@@ -31,14 +31,12 @@
           <v-col cols="12" md="3">
             <v-text-field label="Nome da Mãe" v-model="nomeMae"></v-text-field>
           </v-col>
-
           <v-col cols="12" md="3">
             <v-text-field label="Natureza" v-model="natureza"></v-text-field>
           </v-col>
           <v-col cols="12" md="3">
             <v-text-field label="Unidade" v-model="unidade"></v-text-field>
           </v-col>
-
           <v-col cols="12" md="3">
             <v-text-field
               v-model="dataNascimento"
@@ -58,17 +56,31 @@
           </v-col>
         </v-row>
 
-        <v-dialog v-model="dialog" max-width="800px">
-          <v-card>
-            <v-card-title class="headline">Resultado da Busca</v-card-title>
-            <v-card-text>
-              <pre>{{ jsonResponse }}</pre>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn color="blue" text @click="dialog = false">Fechar</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
+        <v-row v-if="jsonResponseDevir">
+          <v-col cols="12">
+            <h2 class="devir-title">DEVIR</h2>
+          </v-col>
+        </v-row>
+        <v-row v-if="jsonResponseDevir">
+          <v-col cols="12">
+            <div class="json-box">
+              <pre>{{ jsonResponseDevir }}</pre>
+            </div>
+          </v-col>
+        </v-row>
+
+        <v-row v-if="jsonResponseBoOnline">
+          <v-col cols="12">
+            <h2 class="boonline-title">BO online</h2>
+          </v-col>
+        </v-row>
+        <v-row v-if="jsonResponseBoOnline">
+          <v-col cols="12">
+            <div class="json-box">
+              <pre>{{ jsonResponseBoOnline }}</pre>
+            </div>
+          </v-col>
+        </v-row>
       </v-container>
     </v-main>
   </v-layout>
@@ -88,8 +100,8 @@ export default {
       unidade: "",
       dataNascimento: "",
       alcunha: "",
-      dialog: false,
-      jsonResponse: null,
+      jsonResponseDevir: null,
+      jsonResponseBoOnline: null,
     };
   },
   computed: {
@@ -120,12 +132,14 @@ export default {
         const nomeMaeFormatado = this.nomeMae ? `&nomeMae=${this.nomeMae}` : "";
         const cpfFormatado = this.cpf ? `&cpf=${this.limparCpf(this.cpf)}` : "";
 
-        const url = `http://localhost:3000/ocorrencias?numeroOcorrencia=${this.numeroOcorrencia}${nomeFormatado}${alcunhaFormatada}${dataNascimentoFormatada}${nomeMaeFormatado}${cpfFormatado}`;
-        const resposta = await axios.get(url);
+        const urlDevir = ""
 
-        this.jsonResponse = resposta.data;
+        this.jsonResponseDevir = respostaDevir.data;
 
-        this.dialog = true;
+        const urlBoOnline = "";
+        const respostaBoOnline = await axios.get(urlBoOnline);
+
+        this.jsonResponseBoOnline = respostaBoOnline.data;
       } catch (erro) {
         console.error("Erro na requisição:", erro);
       }
@@ -145,5 +159,27 @@ export default {
 
 .v-navigation-drawer {
   background-color: #42a5f5;
+}
+
+.devir-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 20px;
+}
+
+.boonline-title {
+  font-weight: bold;
+  font-size: 1.5rem;
+  margin-top: 20px;
+}
+
+.json-box {
+  background-color: white;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  max-height: 300px;
+  overflow-y: auto;
+  white-space: pre-wrap;
 }
 </style>
